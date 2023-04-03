@@ -6,8 +6,7 @@
       name="viewport"
       content="initial-scale=1, maximum-scale=1, user-scalable=no"
     />
-    <title>ArcGIS Maps SDK for JavaScript Tutorials: Display a map</title>
-
+    <title>ArcGIS Maps SDK for JavaScript Tutorials: Find service areas</title>
     <style>
       html,
       body,
@@ -18,7 +17,6 @@
         width: 100%;
       }
     </style>
-
     <link
       rel="stylesheet"
       href="https://js.arcgis.com/4.26/esri/themes/light/main.css"
@@ -26,23 +24,107 @@
     <script src="https://js.arcgis.com/4.26/"></script>
 
     <script>
-      require(['esri/config', 'esri/Map', 'esri/views/MapView'], function (
+      require([
+        'esri/config',
+        'esri/Map',
+        'esri/views/MapView',
+        'esri/rest/serviceArea',
+        'esri/rest/support/ServiceAreaParameters',
+        'esri/rest/support/FeatureSet',
+        'esri/Graphic',
+      ], function (
         esriConfig,
         Map,
-        MapView
+        MapView,
+        serviceArea,
+        ServiceAreaParams,
+        FeatureSet,
+        Graphic
       ) {
         esriConfig.apiKey = 'AAPKfb35300f8ffc4cbcbc6db463693beb7bYsz76s42_Bv1ZJ0KbKo0GSaP07bv722YQ7as4aeYR9qPJXbw5E2xmMH-nvkenF-d';
 
         const map = new Map({
-          basemap: 'arcgis-topographic', // Basemap layer service
+          basemap: 'arcgis-navigation',
         });
 
         const view = new MapView({
+          container: 'viewDiv',
           map: map,
           center: [5.9128705, 51.9773808], // Longitude, latitude
           zoom: 14, // Zoom level
-          container: 'viewDiv', // Div element
         });
+
+        const serviceAreaUrl =
+          'https://route-api.arcgis.com/arcgis/rest/services/World/ServiceAreas/NAServer/ServiceArea_World/solveServiceArea';
+
+        view.on('click', function (event) {
+          const locationGraphic = createGraphic(event.mapPoint);
+
+          const driveTimeCutoffs = [5, 10, 15]; // Minutes
+          const serviceAreaParams = createServiceAreaParams(
+            locationGraphic,
+            driveTimeCutoffs,
+            view.spatialReference
+          );
+
+          solveServiceArea(serviceAreaUrl, serviceAreaParams);
+        });
+
+        // Create the location graphic
+        function createGraphic(point) {
+          view.graphics.removeAll();
+          const graphic = new Graphic({
+            geometry: point,
+            symbol: {
+              type: 'simple-marker',
+              color: 'white',
+              size: 8,
+            },
+          });
+
+          view.graphics.add(graphic);
+          return graphic;
+        }
+
+        function createServiceAreaParams(
+          locationGraphic,
+          driveTimeCutoffs,
+          outSpatialReference
+        ) {
+          // Create one or more locations (facilities) to solve for
+          const featureSet = new FeatureSet({
+            features: [locationGraphic],
+          });
+
+          // Set all of the input parameters for the service
+          const taskParameters = new ServiceAreaParams({
+            facilities: featureSet,
+            defaultBreaks: driveTimeCutoffs,
+            trimOuterPolygon: true,
+            outSpatialReference: outSpatialReference,
+          });
+          return taskParameters;
+        }
+
+        function solveServiceArea(url, serviceAreaParams) {
+          return serviceArea.solve(url, serviceAreaParams).then(
+            function (result) {
+              if (result.serviceAreaPolygons.features.length) {
+                // Draw each service area polygon
+                result.serviceAreaPolygons.features.forEach(function (graphic) {
+                  graphic.symbol = {
+                    type: 'simple-fill',
+                    color: 'rgba(255,50,50,.25)',
+                  };
+                  view.graphics.add(graphic, 0);
+                });
+              }
+            },
+            function (error) {
+              console.log(error);
+            }
+          );
+        }
       });
     </script>
   </head>
