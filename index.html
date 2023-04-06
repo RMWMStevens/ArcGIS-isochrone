@@ -132,6 +132,11 @@
           url: 'https://services2.arcgis.com/eim8Pt15yR9CiiMR/arcgis/rest/services/accesspoint_to_park/FeatureServer/0',
         });
         map.add(parkAccessPoints);
+
+		const walkingRoutes = new FeatureLayer({
+			url: 'https://services2.arcgis.com/eim8Pt15yR9CiiMR/arcgis/rest/services/walking_routes_v4_arnhem/FeatureServer/1',
+		});
+		map.add(walkingRoutes);
       });
     </script>
   </head>
