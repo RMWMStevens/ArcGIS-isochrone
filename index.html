@@ -116,7 +116,8 @@
                 result.serviceAreaPolygons.features.forEach(function (graphic) {
                   graphic.symbol = {
                     type: 'simple-fill',
-                    color: 'rgba(255,50,50,.25)',
+                    // color: 'rgba(255,50,50,.25)',
+                    color: 'rgba(30,144,255,.25)',
                   };
                   view.graphics.add(graphic, 0);
                 });
@@ -133,10 +134,10 @@
         });
         map.add(parkAccessPoints);
 
-		const walkingRoutes = new FeatureLayer({
-			url: 'https://services2.arcgis.com/eim8Pt15yR9CiiMR/arcgis/rest/services/walking_routes_v4_arnhem/FeatureServer/1',
-		});
-		map.add(walkingRoutes);
+        const walkingRoutes = new FeatureLayer({
+          url: 'https://services2.arcgis.com/eim8Pt15yR9CiiMR/arcgis/rest/services/walking_routes_v4_arnhem/FeatureServer/1',
+        });
+        map.add(walkingRoutes, 0);
       });
     </script>
   </head>
