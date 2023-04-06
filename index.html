@@ -32,6 +32,7 @@
         'esri/rest/support/ServiceAreaParameters',
         'esri/rest/support/FeatureSet',
         'esri/Graphic',
+        'esri/layers/FeatureLayer',
       ], function (
         esriConfig,
         Map,
@@ -39,7 +40,8 @@
         serviceArea,
         ServiceAreaParams,
         FeatureSet,
-        Graphic
+        Graphic,
+        FeatureLayer
       ) {
         esriConfig.apiKey =
           'AAPKfb35300f8ffc4cbcbc6db463693beb7bYsz76s42_Bv1ZJ0KbKo0GSaP07bv722YQ7as4aeYR9qPJXbw5E2xmMH-nvkenF-d';
@@ -125,6 +127,11 @@
             }
           );
         }
+
+        const parkAccessPoints = new FeatureLayer({
+          url: 'https://services2.arcgis.com/eim8Pt15yR9CiiMR/arcgis/rest/services/accesspoint_to_park/FeatureServer/0',
+        });
+        map.add(parkAccessPoints);
       });
     </script>
   </head>
