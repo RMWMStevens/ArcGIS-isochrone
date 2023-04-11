@@ -53,8 +53,8 @@
         const view = new MapView({
           container: 'viewDiv',
           map: map,
-          center: [5.9128705, 51.9773808], // Longitude, latitude
-          zoom: 14, // Zoom level
+          center: [5.921959, 51.981775], // Longitude, latitude
+          zoom: 16, // Zoom level
         });
 
         const serviceAreaUrl =
@@ -63,7 +63,7 @@
         view.on('click', function (event) {
           const locationGraphic = createGraphic(event.mapPoint);
 
-          const driveTimeCutoffs = [1, 2]; // Minutes
+          const driveTimeCutoffs = [1]; // Minutes
           const serviceAreaParams = createServiceAreaParams(
             locationGraphic,
             driveTimeCutoffs,
