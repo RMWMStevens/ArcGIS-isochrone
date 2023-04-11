@@ -63,7 +63,7 @@
         view.on('click', function (event) {
           const locationGraphic = createGraphic(event.mapPoint);
 
-          const driveTimeCutoffs = [1]; // Minutes
+          const driveTimeCutoffs = [0.5, 0.75, 1]; // Minutes
           const serviceAreaParams = createServiceAreaParams(
             locationGraphic,
             driveTimeCutoffs,
@@ -113,13 +113,22 @@
             function (result) {
               if (result.serviceAreaPolygons.features.length) {
                 // Draw each service area polygon
+
+                //			        Green		        Blue  				 Red
+                let colors = [
+                  '14, 255, 0, .25',
+                  '30, 144, 255, .25',
+                  '255, 0, 0, .75',
+                ];
+                let index = 0;
+
                 result.serviceAreaPolygons.features.forEach(function (graphic) {
                   graphic.symbol = {
                     type: 'simple-fill',
-                    // color: 'rgba(255,50,50,.25)',
-                    color: 'rgba(30,144,255,.25)',
+                    color: `rgba(${colors[index % 3]})`,
                   };
                   view.graphics.add(graphic, 0);
+                  index++;
                 });
               }
             },
@@ -129,13 +138,13 @@
           );
         }
 
-		// // Draw park access points provided by Paul Getz
+        // // Draw park access points provided by Paul Getz
         // const parkAccessPoints = new FeatureLayer({
         //   url: 'https://services2.arcgis.com/eim8Pt15yR9CiiMR/arcgis/rest/services/accesspoint_to_park/FeatureServer/0',
         // });
         // map.add(parkAccessPoints);
 
-		// Draw walking routes provided by Paul Getz
+        // Draw walking routes provided by Paul Getz
         const walkingRoutes = new FeatureLayer({
           url: 'https://services2.arcgis.com/eim8Pt15yR9CiiMR/arcgis/rest/services/walking_routes_v4_arnhem/FeatureServer/1',
         });
